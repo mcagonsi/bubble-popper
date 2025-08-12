@@ -70,10 +70,9 @@ export default function GameScreen() {
    * });
    */
   // Fixed gun position - currently in the middle (MODIFY THIS)
-  const gunWidth = 50
-  const gunHeight = 80
+  const gunWidth = 60
   const [gunPosition, setGunPosition] = useState(screenWidth / 2 - gunWidth / 2);
-  const gunCenterX = gunPosition
+  const gunCenterX = gunPosition + gunWidth / 2
   
   /**
    * ============== STUDENT TASK 2 ==============
@@ -91,15 +90,7 @@ export default function GameScreen() {
    *   setGunPosition({ x: locationX - gunWidth/2, y: locationY });
    * };
    */
-  // const handleTouchMove = (event) => {
-  //   if(!gameStarted || gameOver) return;
-  //   // const { locationX, locationY } = event.nativeEvent;
-  //   // setGunPosition({ x: locationX - gunWidth/2, y: locationY });
-  //    const { locationX } = event.nativeEvent;
-  //    const newX = Math.max(0, Math.min(locationX - gunWidth/2, screenWidth - gunWidth));
-  
-  //     setGunPosition(newX);
-  // };
+
   
   // Refs for game timers and IDs
   const bubbleIdRef = useRef(1);
@@ -113,7 +104,8 @@ export default function GameScreen() {
    */
   const handleTap = (event) => {
     if (!gameStarted || gameOver) return;
-    const gunCenterX = event.nativeEvent.locationX;
+    const gunCenterX = event.nativeEvent.x;
+    
     const newPosition = Math.max(0, Math.min(gunCenterX - gunWidth/2, screenWidth - gunWidth));
     setGunPosition(newPosition);
     fireLaser();
@@ -338,7 +330,7 @@ export default function GameScreen() {
             <View
               style={[
                 styles.laser,
-                { left: 60} // Center the 4px wide laser from gun center
+                { left: gunCenterX} // Center the 4px wide laser from gun center
               ]}
             />
           )}
@@ -355,7 +347,7 @@ export default function GameScreen() {
           
           {/* Gun - currently static in middle */}
           <View style={[styles.gun, { left: gunPosition }]}>
-            <Image source ={require('./assets/gun.png')} style={{width: 60, height: 50}}/>
+            <Image source ={require('./assets/gun.png')} style={{width: gunWidth, height: 50}}/>
           </View>
         </View>
       </TouchableWithoutFeedback>
