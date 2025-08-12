@@ -69,11 +69,11 @@ export default function GameScreen() {
    *   y: screenHeight - 70
    * });
    */
-  console.log(screenWidth)
   // Fixed gun position - currently in the middle (MODIFY THIS)
   const gunWidth = 50
-  const gunPosition = screenWidth / 2 - gunWidth / 2;
-  const gunCenterX = screenWidth / 2;
+  const gunHeight = 80
+  const [gunPosition, setGunPosition] = useState(screenWidth / 2 - gunWidth / 2);
+  const gunCenterX = gunPosition
   
   /**
    * ============== STUDENT TASK 2 ==============
@@ -91,6 +91,15 @@ export default function GameScreen() {
    *   setGunPosition({ x: locationX - gunWidth/2, y: locationY });
    * };
    */
+  // const handleTouchMove = (event) => {
+  //   if(!gameStarted || gameOver) return;
+  //   // const { locationX, locationY } = event.nativeEvent;
+  //   // setGunPosition({ x: locationX - gunWidth/2, y: locationY });
+  //    const { locationX } = event.nativeEvent;
+  //    const newX = Math.max(0, Math.min(locationX - gunWidth/2, screenWidth - gunWidth));
+  
+  //     setGunPosition(newX);
+  // };
   
   // Refs for game timers and IDs
   const bubbleIdRef = useRef(1);
@@ -102,8 +111,11 @@ export default function GameScreen() {
    * Handle tap to shoot laser
    * Currently fires the laser on any tap when game is active
    */
-  const handleTap = () => {
+  const handleTap = (event) => {
     if (!gameStarted || gameOver) return;
+    const gunCenterX = event.nativeEvent.locationX;
+    const newPosition = Math.max(0, Math.min(gunCenterX - gunWidth/2, screenWidth - gunWidth));
+    setGunPosition(newPosition);
     fireLaser();
   };
   
@@ -142,7 +154,7 @@ export default function GameScreen() {
     // Make laser disappear after 300ms
     laserTimeoutRef.current = setTimeout(() => {
       setLaserVisible(false);
-    }, 300);
+    }, 200);
   };
   
   /**
@@ -326,7 +338,7 @@ export default function GameScreen() {
             <View
               style={[
                 styles.laser,
-                { left: gunCenterX - 2 } // Center the 4px wide laser from gun center
+                { left: 60} // Center the 4px wide laser from gun center
               ]}
             />
           )}
@@ -343,13 +355,13 @@ export default function GameScreen() {
           
           {/* Gun - currently static in middle */}
           <View style={[styles.gun, { left: gunPosition }]}>
-            {/* <View style={styles.gunBase} />
-            <View style={styles.gunBarrel} /> */}
-            <Image source ={require('./assets/gun.png')} style={{width: 100, height: 100}}/>
+            <Image source ={require('./assets/gun.png')} style={{width: 60, height: 50}}/>
           </View>
         </View>
       </TouchableWithoutFeedback>
 
+
+       
       {/* Score and Timer */}
       <View style={styles.hudContainer}>
         <Text style={styles.scoreText}>Score: {score}</Text>
@@ -384,24 +396,15 @@ export default function GameScreen() {
   );
 }
 
-/**
- * ============== STUDENT TASK 7 ==============
- * TODO: ENHANCE THE STYLING
- * Consider adding styles for:
- * 1. Different gun states (active, cooldown)
- * 2. Enhanced laser effects
- * 3. Controls for gun movement
- * 4. Power-ups or special ability indicators
- */
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
     backgroundColor: '#000033',
   },
   gameArea: {
-    flex: 1,
-    width: '100%',
+    width: '95%',
     height: '100%',
   },
   hudContainer: {
@@ -456,28 +459,13 @@ const styles = StyleSheet.create({
     zIndex: 50,
     
   },
-  // gunBase: {
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   width: 40,
-  //   height: 20,
-  //   backgroundColor: '#333',
-  //   borderTopLeftRadius: 5,
-  //   borderTopRightRadius: 5,
-  // },
-  // gunBarrel: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   width: 10,
-  //   height: 30,
-  //   backgroundColor: '#222',
-  // },
   laser: {
     position: 'absolute',
     top: 0,
+    bottom:3,
     width: 4,
-    height: '100%',
-    backgroundColor: '#ff0000',
+    height: '95%',
+    backgroundColor: '#ff8000',
     shadowColor: '#ff0000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
@@ -485,96 +473,13 @@ const styles = StyleSheet.create({
     elevation: 20,
     zIndex: 90,
   },
-   // Enhanced gun states
-  // gunready: {
-  //   backgroundColor: '#555',
-  //   borderColor: '#4CAF50',
-  //   borderWidth: 2,
-  // },
-  // gunfiring: {
-  //   backgroundColor: '#ff4444',
-  //   borderColor: '#ff0000',
-  //   borderWidth: 3,
-  //   shadowColor: '#ff0000',
-  //   shadowOffset: { width: 0, height: 0 },
-  //   shadowOpacity: 0.8,
-  //   shadowRadius: 10,
-  // },
-  // guncooldown: {
-  //   backgroundColor: '#666',
-  //   borderColor: '#ffaa00',
-  //   borderWidth: 2,
-  //   opacity: 0.7,
-  // },
-  
-  // Power meter
-  powerMeter: {
+
+  gunControlArea: {
     position: 'absolute',
-    bottom: 80,
-    left: 20,
-    right: 20,
-    height: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 10,
-    padding: 2,
-  },
-  powerBar: {
-    flex: 1,
-    backgroundColor: '#333',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  powerFill: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-  },
-  powerText: {
-    position: 'absolute',
-    right: 5,
-    top: 0,
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  
-  // Control buttons
-  controlArea: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  controlButton: {
-    width: 60,
-    height: 60,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
-  },
-  controlText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  
-  // Muzzle flash effect
-  gunMuzzleFlash: {
-    position: 'absolute',
-    top: -10,
-    left: 25,
-    width: 10,
-    height: 20,
-    backgroundColor: '#ffff00',
-    borderRadius: 5,
-    shadowColor: '#ffff00',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 5,
+    bottom: 10,
+    left: 0,
+    right: 0,
+    height: 80,
+    zIndex: 1, // Ensure it's below other elements
   },
 });
