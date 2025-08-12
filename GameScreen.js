@@ -33,6 +33,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Bubble from './components/Bubble';
+import { Image } from 'react-native';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -68,9 +69,9 @@ export default function GameScreen() {
    *   y: screenHeight - 70
    * });
    */
-  
+  console.log(screenWidth)
   // Fixed gun position - currently in the middle (MODIFY THIS)
-  const gunWidth = 60;
+  const gunWidth = 50
   const gunPosition = screenWidth / 2 - gunWidth / 2;
   const gunCenterX = screenWidth / 2;
   
@@ -342,8 +343,9 @@ export default function GameScreen() {
           
           {/* Gun - currently static in middle */}
           <View style={[styles.gun, { left: gunPosition }]}>
-            <View style={styles.gunBase} />
-            <View style={styles.gunBarrel} />
+            {/* <View style={styles.gunBase} />
+            <View style={styles.gunBarrel} /> */}
+            <Image source ={require('./assets/gun.png')} style={{width: 100, height: 100}}/>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -452,25 +454,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 50,
-    backgroundColor: '#555',
-    borderRadius: 5,
+    
   },
-  gunBase: {
-    position: 'absolute',
-    bottom: 0,
-    width: 40,
-    height: 20,
-    backgroundColor: '#333',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-  },
-  gunBarrel: {
-    position: 'absolute',
-    bottom: 20,
-    width: 10,
-    height: 30,
-    backgroundColor: '#222',
-  },
+  // gunBase: {
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   width: 40,
+  //   height: 20,
+  //   backgroundColor: '#333',
+  //   borderTopLeftRadius: 5,
+  //   borderTopRightRadius: 5,
+  // },
+  // gunBarrel: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   width: 10,
+  //   height: 30,
+  //   backgroundColor: '#222',
+  // },
   laser: {
     position: 'absolute',
     top: 0,
@@ -483,5 +484,97 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 20,
     zIndex: 90,
+  },
+   // Enhanced gun states
+  // gunready: {
+  //   backgroundColor: '#555',
+  //   borderColor: '#4CAF50',
+  //   borderWidth: 2,
+  // },
+  // gunfiring: {
+  //   backgroundColor: '#ff4444',
+  //   borderColor: '#ff0000',
+  //   borderWidth: 3,
+  //   shadowColor: '#ff0000',
+  //   shadowOffset: { width: 0, height: 0 },
+  //   shadowOpacity: 0.8,
+  //   shadowRadius: 10,
+  // },
+  // guncooldown: {
+  //   backgroundColor: '#666',
+  //   borderColor: '#ffaa00',
+  //   borderWidth: 2,
+  //   opacity: 0.7,
+  // },
+  
+  // Power meter
+  powerMeter: {
+    position: 'absolute',
+    bottom: 80,
+    left: 20,
+    right: 20,
+    height: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 10,
+    padding: 2,
+  },
+  powerBar: {
+    flex: 1,
+    backgroundColor: '#333',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  powerFill: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+  },
+  powerText: {
+    position: 'absolute',
+    right: 5,
+    top: 0,
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  
+  // Control buttons
+  controlArea: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  controlButton: {
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  controlText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  
+  // Muzzle flash effect
+  gunMuzzleFlash: {
+    position: 'absolute',
+    top: -10,
+    left: 25,
+    width: 10,
+    height: 20,
+    backgroundColor: '#ffff00',
+    borderRadius: 5,
+    shadowColor: '#ffff00',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 5,
   },
 });

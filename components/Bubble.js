@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 
 /**
  * Bubble component for the Bubble Popper game
@@ -32,25 +32,25 @@ import { View, StyleSheet } from 'react-native';
 export default function Bubble({ x, y, radius }) {
   return (
     <View
+    
       style={[
         styles.bubble,
         {
-          left: x,
-          top: y,
-          width: radius * 2,
-          height: radius * 2,
-          borderRadius: radius,
-        },
-      ]}
-    />
+        width: radius * 2,
+        height:radius * 2,
+        left:x,
+        top:y,
+        borderRadius:radius,
+      }]}
+    >
+      <Image source ={require('../assets/alien.png')} style={{width: 100, height: 100}}/>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   bubble: {
     position: 'absolute',
-    backgroundColor: '#4CAF50',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
