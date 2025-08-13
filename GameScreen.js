@@ -31,7 +31,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 import Bubble from './components/Bubble';
 import { Image } from 'react-native';
 
@@ -54,42 +54,13 @@ export default function GameScreen() {
   const [bubbles, setBubbles] = useState([]);
   const [laserVisible, setLaserVisible] = useState(false);
   
-  /**
-   * ============== STUDENT TASK 1 ==============
-   * TODO: IMPLEMENT MOVABLE GUN
-   * 
-   * Currently the gun is fixed in the middle. Modify this code to:
-   * 1. Add state to track gun position (both X and Y coordinates)
-   * 2. Allow the gun to move based on user input (e.g., touch/drag or buttons)
-   * 3. Ensure the gun stays within screen boundaries
-   * 
-   * Example implementation approach:
-   * const [gunPosition, setGunPosition] = useState({ 
-   *   x: screenWidth / 2 - gunWidth / 2, 
-   *   y: screenHeight - 70
-   * });
-   */
+
   // Fixed gun position - currently in the middle (MODIFY THIS)
-  const gunWidth = 60
+  const gunWidth = 100
   const [gunPosition, setGunPosition] = useState(screenWidth / 2 - gunWidth / 2);
-  const gunCenterX = gunPosition + gunWidth / 2
+  const gunCenterX = gunPosition + gunWidth / 2;
+ 
   
-  /**
-   * ============== STUDENT TASK 2 ==============
-   * TODO: IMPLEMENT GUN MOVEMENT
-   * 
-   * Add functions to:
-   * 1. Handle touch/drag events to move the gun
-   * 2. Update the gun position state
-   * 3. Add visual feedback for active controls
-   * 
-   * Example implementation approach:
-   * const handleTouchMove = (event) => {
-   *   const { locationX, locationY } = event.nativeEvent;
-   *   // Apply constraints to keep gun on screen
-   *   setGunPosition({ x: locationX - gunWidth/2, y: locationY });
-   * };
-   */
 
   
   // Refs for game timers and IDs
@@ -102,13 +73,13 @@ export default function GameScreen() {
    * Handle tap to shoot laser
    * Currently fires the laser on any tap when game is active
    */
-  const handleTap = (event) => {
+  const moveGunToPosition = (gunCenterX) => {
     if (!gameStarted || gameOver) return;
-    const gunCenterX = event.nativeEvent.x;
     
+    // const gunCenterX = event.nativeEvent.x;
     const newPosition = Math.max(0, Math.min(gunCenterX - gunWidth/2, screenWidth - gunWidth));
     setGunPosition(newPosition);
-    fireLaser();
+    // fireLaser();
   };
   
   /**
@@ -124,21 +95,6 @@ export default function GameScreen() {
     // Make laser visible
     setLaserVisible(true);
     
-    /**
-     * ============== STUDENT TASK 3 ==============
-     * TODO: MODIFY LASER FIRING
-     * 
-     * Currently the laser always fires from the center.
-     * Update this to:
-     * 1. Fire from the current gun position
-     * 2. Consider firing angle/direction based on gun orientation
-     * 3. Add visual or sound effects for better feedback
-     * 
-     * Example implementation approach:
-     * - Calculate laser end point based on angle
-     * - Update laser rendering to show angled beam
-     * - Add impact effects when laser hits bubbles
-     */
     
     // Check for hits immediately
     checkHits(gunCenterX);
@@ -158,22 +114,7 @@ export default function GameScreen() {
       const hitBubbleIds = [];
       let hitCount = 0;
       
-      /**
-       * ============== STUDENT TASK 4 ==============
-       * TODO: IMPROVE COLLISION DETECTION
-       * 
-       * The current collision only works on X axis.
-       * Enhance it to:
-       * 1. Consider both X and Y coordinates
-       * 2. Account for gun position and angle
-       * 3. Add smarter targeting or auto-aiming features
-       * 
-       * Example implementation approach:
-       * - Calculate distance between laser line and bubble center
-       * - Use line-circle intersection algorithms for angled lasers
-       * - Consider adding laser width for more realistic collision
-       */
-      
+    
       // Check each bubble for collision
       prevBubbles.forEach(bubble => {
         // Calculate bubble center
@@ -303,8 +244,9 @@ export default function GameScreen() {
   return (
     <View style={styles.container}>
       {/* Game area */}
-      <TouchableWithoutFeedback onPress={handleTap} disabled={!gameStarted || gameOver}>
-        <View style={styles.gameArea}>
+      <TouchableWithoutFeedback disabled={!gameStarted || gameOver}>
+        <View style={styles.gameArea}
+          >
           {/* Bubbles */}
           {bubbles.map(bubble => (
             <Bubble
@@ -315,42 +257,27 @@ export default function GameScreen() {
             />
           ))}
           
-          {/**
-           * ============== STUDENT TASK 5 ==============
-           * TODO: MODIFY LASER RENDERING
-           * Currently the laser is a simple vertical line.
-           * Enhance it to:
-           * 1. Render based on gun position and angle
-           * 2. Add visual effects (color, thickness, etc.)
-           * 3. Consider adding a cooldown or power meter
-           */}
-          
-          {/* Laser - currently fixed to fire from center of gun */}
+  
           {laserVisible && (
             <View
               style={[
                 styles.laser,
-                { left: gunCenterX} // Center the 4px wide laser from gun center
+                { left: gunCenterX} 
               ]}
             />
           )}
           
-          {/**
-           * ============== STUDENT TASK 6 ==============
-           * TODO: MODIFY GUN RENDERING
-           * Currently the gun is fixed at the bottom center.
-           * Update it to:
-           * 1. Use the gun position state you created
-           * 2. Add visual indication of gun direction/angle
-           * 3. Add controls or touch areas for movement
-           */}
           
           {/* Gun - currently static in middle */}
-          <View style={[styles.gun, { left: gunPosition }]}>
-            <Image source ={require('./assets/gun.png')} style={{width: gunWidth, height: 50}}/>
-          </View>
+           <TouchableOpacity style={[styles.gun, { left: gunPosition }]}
+          onPressIn={(e) => moveGunToPosition(e.nativeEvent.pageX)}
+          onPressMove={(e) => moveGunToPosition(e.nativeEvent.pageX)}
+          onPressOut={()=>fireLaser()}>
+            <Image source ={require('./assets/gun.png')} style={{width: gunWidth, height: 70}}/>
+          </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
+      
 
 
        
@@ -391,13 +318,13 @@ export default function GameScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
+    width: screenWidth,
+    height: screenHeight,
     backgroundColor: '#000033',
   },
   gameArea: {
-    width: '95%',
-    height: '100%',
+    width: screenWidth,
+    height: screenHeight,
   },
   hudContainer: {
     flexDirection: 'row',
@@ -444,7 +371,7 @@ const styles = StyleSheet.create({
   gun: {
     position: 'absolute',
     bottom: 10,
-    width: 60,
+    width: 100,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
